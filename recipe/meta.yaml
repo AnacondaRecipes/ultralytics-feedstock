@@ -63,8 +63,6 @@ requirements:
     - albumentations>=1.4.6
     - faster-coco-eval >=1.6.7
 
-{% set ignore_tests = "--ignore=tests/test_cli.py" %}
-
 test:
   source_files:
     - tests

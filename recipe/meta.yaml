@@ -64,9 +64,6 @@ requirements:
     - albumentations>=1.4.6
     - faster-coco-eval >=1.6.7
 
-# Failing only on CI, requires GUI handling.
-{% set deselect_tests = "--deselect=tests/test_python.py::test_utils_checks" %}
-
 test:
   source_files:
     - tests
@@ -139,10 +136,11 @@ test:
   requires:
     - pip
     - pytest
+    - git
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest -v tests {{ deselect_tests }}
+    - pytest -v tests
     - yolo checks
     - ultralytics version
 

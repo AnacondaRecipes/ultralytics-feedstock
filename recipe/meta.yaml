@@ -86,7 +86,7 @@ requirements:
 # WARNING requirements: Command 'pip install --no-cache-dir "openvino>=2024.0.0" ' returned non-zero exit status 1.
 # ERROR: Could not find a version that satisfies the requirement openvino>=2024.0.0 (from versions: none)
 # ERROR: No matching distribution found for openvino>=2024.0.0
-{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino" %}  # [aarch64 and py<=312]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino" %}  # [aarch64 and py>=312]
 
 
 test:

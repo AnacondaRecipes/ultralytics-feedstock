@@ -68,6 +68,27 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_solutions.py" %}  # [osx]
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_cli.py::test_solutions" %}  # [osx]
 
+# [LINUX64-PY313]:
+# E   AttributeError: module 'tensorflow._api.v2.compat.v2.__internal__' has no attribute 'register_load_context_function'. Did you mean: 'register_call_context_function'?
+# Upstream tests are automatically installing tf_keras-2.15.0 which is not compatible with tensorflow-2.20.0. 
+# https://github.com/keras-team/tf-keras/issues/257
+# This issue can be fixed by pinning tf-keras to test environment but tf_keras<=2.19.0 is not available for Python 3.13 on the main channel
+# Upstream requirement: https://github.com/ultralytics/ultralytics/blob/v8.4.19/ultralytics/engine/exporter.py#L1062
+# [LINUX-AARCH64 PY313]:
+# E ImportError: /lib64/libm.so.6: version `GLIBC_2.29' not found
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_tflite" %}  # [(linux64 and py>=313) or aarch64]
+
+# [LINUX-AARCH64 PY312/PY313]:
+# openvivo is not available on main channel
+# Upstream test env tries to install it during test execution using pip but openvivo is not available for linux-aarch64 py>=312
+# This is why those test are working on other platforms and pythons.
+# Ultralytics requirement ['openvino>=2024.0.0'] not found, attempting AutoUpdate...
+# WARNING requirements: Command 'pip install --no-cache-dir "openvino>=2024.0.0" ' returned non-zero exit status 1.
+# ERROR: Could not find a version that satisfies the requirement openvino>=2024.0.0 (from versions: none)
+# ERROR: No matching distribution found for openvino>=2024.0.0
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino" %}  # [aarch64 and py<=312]
+
+
 test:
   source_files:
     - tests

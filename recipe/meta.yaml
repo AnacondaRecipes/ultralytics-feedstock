@@ -35,8 +35,8 @@ requirements:
     - pytorch >=1.8.0  # [unix]
     - pytorch >=1.8.0,!=2.4.0  # [win]
     - torchvision >=0.9.0 
-    - psutil
-    - polars
+    - psutil >=5.8.0
+    - polars >=0.20.0
     - ultralytics-thop >=2.0.18
   run_constrained:
     # export
@@ -53,6 +53,7 @@ requirements:
     - tensorflowjs >=2.0.0
     - tensorstore >=0.1.63  # [aarch64 and py>=39]
     - h5py !=3.11.0  # [aarch64]
+    - packaging >=26.0 # [linux and aarch64 and py>=313]
     # solutions
     - shapely >=2.0.0
     - streamlit >=1.51.0  # [py>=310]

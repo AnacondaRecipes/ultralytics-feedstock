@@ -23,9 +23,6 @@ requirements:
     - pip
     - setuptools >=70.0.0,<=81.0.0
     - wheel
-    # Specific version to fix: RuntimeError: Couldn't load custom C++ ops. This can happen if your PyTorch and torchvision versions are incompatible.
-    # https://github.com/AnacondaRecipes/torchvision-feedstock/blob/master/recipe/meta.yaml#L8C8-L8C26
-    - pytorch 2.7
   run:
     - python
     - numpy >=1.23
@@ -71,7 +68,7 @@ requirements:
 # Failing only on CI, requires GUI handling.
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_python.py::test_utils_checks" %}  # [osx]
 # openvivo is not available on main channel
-# Upstream test env tries to install it during test execution but it is failing to install on CI.
+# Upstream test env tries to install it during test execution but it is failing to install on Linux CI.
 # WARNING requirements: Command 'pip install --no-cache-dir "openvino>=2024.0.0" ' returned non-zero exit status 1.
 # ERROR 0m export failure 2.8s: No module named 'openvino'
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino" %}  # [linux]
@@ -150,6 +147,10 @@ test:
     - pytest
     - git
     - tensorflow
+    # Specific version to fix: RuntimeError: Couldn't load custom C++ ops. This can happen if your PyTorch and torchvision versions are incompatible.
+    # https://github.com/AnacondaRecipes/torchvision-feedstock/blob/master/recipe/meta.yaml#L8C8-L8C26
+    # Some PBP platforms are using the GPU version for some reason:
+    - pytorch =2.7.0=cpu_openblas_*
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"

@@ -13,7 +13,7 @@ build:
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
   # Drop py3.14 for now since torchvision is not available for it
-  skip: true  # [py<38 or py<314]
+  skip: true  # [py<38 or py>313]
   entry_points:
     - yolo = ultralytics.cfg:entrypoint
     - ultralytics = ultralytics.cfg:entrypoint

@@ -1,5 +1,5 @@
 {% set name = "ultralytics" %}
-{% set version = "8.4.19" %}
+{% set version = "8.4.33" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: e4bb5abf58e54fcb2c36fe37a6b12ab96b73de766692f24e53b69f1fa8987eb3
+  sha256: 0f45846fea8cf70b8e332e31334b8c42eec35f649f57b9012fc81721f695339a
 
 build:
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
@@ -21,7 +21,7 @@ requirements:
   host:
     - python
     - pip
-    - setuptools >=70.0.0,<=81.0.0
+    - setuptools >=70.0.0,<=82.0.1
     - wheel
   run:
     - python
@@ -51,6 +51,7 @@ requirements:
     # Remove tensorflow upper bound to avoid solver failures between tensorflow/pytorch/torchvision
     - tensorflow >=2.0.0
     - tensorflowjs >=2.0.0
+    - ydf <0.13.0  # [not aarch64]
     - tensorstore >=0.1.63  # [aarch64 and py>=39]
     - h5py !=3.11.0  # [aarch64]
     - packaging >=26.0 # [linux and aarch64 and py>=313]
@@ -82,13 +83,12 @@ requirements:
 # [LINUX-AARCH64 PY312/PY313]:
 # openvivo is not available on main channel
 # Upstream test env tries to install it during test execution using pip but openvivo is not available for linux-aarch64 py>=312
-# This is why those test are working on other platforms and pythons.
+# This is why those tests are working on other platforms and pythons.
 # Ultralytics requirement ['openvino>=2024.0.0'] not found, attempting AutoUpdate...
 # WARNING requirements: Command 'pip install --no-cache-dir "openvino>=2024.0.0" ' returned non-zero exit status 1.
 # ERROR: Could not find a version that satisfies the requirement openvino>=2024.0.0 (from versions: none)
 # ERROR: No matching distribution found for openvino>=2024.0.0
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino" %}  # [aarch64 and py>=312]
-
 
 test:
   source_files:
@@ -169,7 +169,8 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest -v tests {{ deselect_tests }}
+    # Unit tests after positive run just hanging on results prompt on osx.
+    - pytest -v tests {{ deselect_tests }} # [not (osx and py>=313)]
     - yolo checks
     - ultralytics version
 

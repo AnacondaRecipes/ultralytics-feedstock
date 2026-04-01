@@ -12,7 +12,8 @@ source:
 build:
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
-  skip: true  # [py<38]
+  # Drop py3.14 for now since torchvision is not available for it
+  skip: true  # [py<38 or py<314]
   entry_points:
     - yolo = ultralytics.cfg:entrypoint
     - ultralytics = ultralytics.cfg:entrypoint
@@ -34,7 +35,7 @@ requirements:
     - scipy >=1.4.1
     - pytorch >=1.8.0  # [unix]
     - pytorch >=1.8.0,!=2.4.0  # [win]
-    - torchvision >=0.9.0 
+    - torchvision >=0.9.0
     - psutil >=5.8.0
     - polars >=0.20.0
     - ultralytics-thop >=2.0.18

@@ -1,22 +1,22 @@
 {% set name = "ultralytics" %}
-{% set version = "8.4.33" %}
+{% set version = "8.4.69" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 0f45846fea8cf70b8e332e31334b8c42eec35f649f57b9012fc81721f695339a
+  sha256: a619dfc5d56560dce3f7bb1f23675b338d16095922cfe2bf217f6260e378d01f
 
 build:
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
-  # Drop py3.14 for now since torchvision is not available for it
-  skip: true  # [py<38 or py>313]
   entry_points:
     - yolo = ultralytics.cfg:entrypoint
     - ultralytics = ultralytics.cfg:entrypoint
+  # Drop py3.14 for now since torchvision is not available for it
+  skip: true  # [py<38 or py>313]
 
 requirements:
   host:
@@ -38,6 +38,7 @@ requirements:
     - torchvision >=0.9.0
     - psutil >=5.8.0
     - polars >=0.20.0
+    - nvidia-ml-py >=12.0.0
     - ultralytics-thop >=2.0.18
   run_constrained:
     # export
@@ -46,9 +47,12 @@ requirements:
     - onnx >=1.12.0  # [not osx]
     - onnx >=1.12.0,<1.18.0  # [osx]
     - onnxslim >=0.1.82
+    - onnxruntime <1.20.0  # [win or (linux and x86_64) or (osx and arm64)]
+    - onnxruntime >=1.20.0  # [py>=311]
+    - nncf >=2.14.0,<3.0.0  # [py>=39]
+    - openvino >=2024.0.0
     - coremltools >=9.0  # [not win and py<=313]
     - scikit-learn >=1.3.2  # [not win and py<=313]
-    - openvino >=2024.0.0
     # Remove tensorflow upper bound to avoid solver failures between tensorflow/pytorch/torchvision
     - tensorflow >=2.0.0
     - tensorflowjs >=2.0.0

@@ -1,17 +1,47 @@
 {% set name = "ultralytics" %}
-{% set version = "8.4.69" %}
+{% set version = "8.4.127" %}
+{% set deselect_tests = "" %}
+{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_python.py::test_utils_checks"' %}  # [osx]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_solutions.py" %}  # [osx]
+{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_cli.py::test_solutions"' %}  # [osx]
+{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_exports.py::test_export_tflite"' %}  # [(linux64 and py>=313) or aarch64]
+{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino"' %}  # [linux]
+{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_exports.py::test_export_mnn"' %}  # [linux]
+{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_exports.py::test_export_ncnn"' %}  # [osx]
 
+# Failing only on CI, requires GUI/display (SIGABRT when no screen: "Cannot create window: no screens available").
+# [LINUX64 PY313]:
+# E   AttributeError: module 'tensorflow._api.v2.compat.v2.__internal__' has no attribute 'register_load_context_function'. Did you mean: 'register_call_context_function'?
+# Upstream tests are automatically installing tf_keras-2.15.0 which is not compatible with tensorflow-2.20.0.
+# https://github.com/keras-team/tf-keras/issues/257
+# This issue can be fixed by pinning tf-keras to test environment but tf_keras<=2.19.0 is not available for Python 3.13 on the main channel
+# Upstream requirement: https://github.com/ultralytics/ultralytics/blob/v8.4.19/ultralytics/engine/exporter.py#L1062
+# [LINUX-AARCH64 ALL PYTHONS]:
+# E ImportError: /lib64/libm.so.6: version `GLIBC_2.29' not found
+# [LINUX-AARCH64 PY312/PY313]:
+# openvivo is not available on main channel
+# Upstream test env tries to install it during test execution using pip but openvivo is not available for linux-aarch64 py>=312
+# This is why those tests are working on other platforms and pythons.
+# Ultralytics requirement ['openvino>=2024.0.0'] not found, attempting AutoUpdate...
+# WARNING requirements: Command 'pip install --no-cache-dir "openvino>=2024.0.0" ' returned non-zero exit status 1.
+# ERROR: Could not find a version that satisfies the requirement openvino>=2024.0.0 (from versions: none)
+# ERROR: No matching distribution found for openvino>=2024.0.0
+# Fatal Python error: Aborted
+# File ".../MNN/tools/mnnquant.py", line 8 in <module>
+#  ← importing _mnncengine (listed last in Extension modules)
+# mnn is an optional export format, skip test:
+# E   FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/bf/zv4tnz9n509d_vvdxt3l9w8c0000gn/T/pytest-of-ec2-user/pytest-9/test_export_ncnn0/yolo26n_ncnn_model/model_pnnx.py'
 package:
   name: {{ name }}
   version: {{ version }}
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: a619dfc5d56560dce3f7bb1f23675b338d16095922cfe2bf217f6260e378d01f
+  sha256: acb343a52f9580eaad39f1554a7003a66d19328f27b003d603c506e227e84986
 
 build:
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  number: 1
+  number: 0
   entry_points:
     - yolo = ultralytics.cfg:entrypoint
     - ultralytics = ultralytics.cfg:entrypoint
@@ -22,13 +52,14 @@ requirements:
   host:
     - python
     - pip
-    - setuptools >=70.0.0,<=82.0.1
+    - setuptools >=70.0.0,<=84.0.0
     - wheel
+    - pytorch {{ pytorch }}
   run:
     - python
     - numpy >=1.23
     - matplotlib-base >=3.3.0
-    - opencv >=4.6.0
+    - opencv >=4.7.0,!=4.13.0.90
     - pillow >=7.1.2
     - pyyaml >=5.3.1
     - requests >=2.23.0
@@ -39,7 +70,9 @@ requirements:
     - psutil >=5.8.0
     - polars >=0.20.0
     - nvidia-ml-py >=12.0.0
-    - ultralytics-thop >=2.0.18
+    - ultralytics-thop >=2.1.6
+    - filelock >=3.16.1
+    - ultralytics-platform >=0.1.3  # [py>=311]
   run_constrained:
     # export
     # No numpy <2.0.0 for Python 3.13
@@ -59,50 +92,17 @@ requirements:
     - ydf <0.13.0  # [not aarch64]
     - tensorstore >=0.1.63  # [aarch64 and py>=39]
     - h5py !=3.11.0  # [aarch64]
-    - packaging >=26.0 # [linux and aarch64 and py>=313]
+    - packaging >=26.0  # [linux and aarch64 and py>=313]
     # solutions
     - shapely >=2.0.0
     - streamlit >=1.51.0  # [py>=310]
     - streamlit >=1.29.0,<1.51.0  # [py<310 and (not linux)]
     - flask >=3.0.1
     # extra
-    - albumentations>=1.4.6
+    - albumentations >=1.4.6
     - faster-coco-eval >=1.6.7
-
-{% set deselect_tests = "" %}
-# Failing only on CI, requires GUI/display (SIGABRT when no screen: "Cannot create window: no screens available").
-{% set deselect_tests = deselect_tests + " --deselect=tests/test_python.py::test_utils_checks" %}  # [osx]
-{% set deselect_tests = deselect_tests + " --deselect=tests/test_solutions.py" %}  # [osx]
-{% set deselect_tests = deselect_tests + " --deselect=tests/test_cli.py::test_solutions" %}  # [osx]
-
-# [LINUX64 PY313]:
-# E   AttributeError: module 'tensorflow._api.v2.compat.v2.__internal__' has no attribute 'register_load_context_function'. Did you mean: 'register_call_context_function'?
-# Upstream tests are automatically installing tf_keras-2.15.0 which is not compatible with tensorflow-2.20.0. 
-# https://github.com/keras-team/tf-keras/issues/257
-# This issue can be fixed by pinning tf-keras to test environment but tf_keras<=2.19.0 is not available for Python 3.13 on the main channel
-# Upstream requirement: https://github.com/ultralytics/ultralytics/blob/v8.4.19/ultralytics/engine/exporter.py#L1062
-# [LINUX-AARCH64 ALL PYTHONS]:
-# E ImportError: /lib64/libm.so.6: version `GLIBC_2.29' not found
-{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_tflite" %}  # [(linux64 and py>=313) or aarch64]
-
-# [LINUX-AARCH64 PY312/PY313]:
-# openvivo is not available on main channel
-# Upstream test env tries to install it during test execution using pip but openvivo is not available for linux-aarch64 py>=312
-# This is why those tests are working on other platforms and pythons.
-# Ultralytics requirement ['openvino>=2024.0.0'] not found, attempting AutoUpdate...
-# WARNING requirements: Command 'pip install --no-cache-dir "openvino>=2024.0.0" ' returned non-zero exit status 1.
-# ERROR: Could not find a version that satisfies the requirement openvino>=2024.0.0 (from versions: none)
-# ERROR: No matching distribution found for openvino>=2024.0.0
-{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino" %}  # [linux]
-
-# Fatal Python error: Aborted
-# File ".../MNN/tools/mnnquant.py", line 8 in <module>
-#  ← importing _mnncengine (listed last in Extension modules)
-# mnn is an optional export format, skip test:
-{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_mnn" %}  # [linux]
-
-# E   FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/bf/zv4tnz9n509d_vvdxt3l9w8c0000gn/T/pytest-of-ec2-user/pytest-9/test_export_ncnn0/yolo26n_ncnn_model/model_pnnx.py'
-{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_ncnn" %}  # [osx]
+    - openai >=2.0.0
+    - lap >=0.5.12
 
 test:
   source_files:
@@ -184,7 +184,7 @@ test:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
     # Unit tests after positive run just hanging on results prompt on osx.
-    - pytest -v tests {{ deselect_tests }} # [not (osx and py>=313)]
+    - pytest -v tests {{ deselect_tests }}  # [not (osx and py>=313)]
     - yolo checks
     - ultralytics version
 

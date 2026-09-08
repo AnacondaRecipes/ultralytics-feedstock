@@ -110,13 +110,13 @@ requirements:
 # mnn is an optional export format, skip test:
 # E   FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/bf/zv4tnz9n509d_vvdxt3l9w8c0000gn/T/pytest-of-ec2-user/pytest-9/test_export_ncnn0/yolo26n_ncnn_model/model_pnnx.py'
 {% set deselect_tests = "" %}
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_python.py::test_utils_checks"' %}  # [osx]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_python.py::test_utils_checks" %}  # [osx]
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_solutions.py" %}  # [osx]
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_cli.py::test_solutions"' %}  # [osx]
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_exports.py::test_export_tflite"' %}  # [(linux64 and py>=313) or aarch64]
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino"' %}  # [linux]
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_exports.py::test_export_mnn"' %}  # [linux]
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/test_exports.py::test_export_ncnn"' %}  # [osx]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_cli.py::test_solutions" %}  # [osx]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_tflite" %}  # [(linux64 and py>=313) or aarch64]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_openvino" %}  # [linux]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_mnn" %}  # [linux]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_ncnn" %}  # [osx]
 
 test:
   source_files:

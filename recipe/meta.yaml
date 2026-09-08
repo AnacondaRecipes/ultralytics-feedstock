@@ -139,10 +139,6 @@ test:
     - ultralytics.engine.results
     - ultralytics.engine.trainer
     - ultralytics.engine.validator
-    - ultralytics.hub
-    - ultralytics.hub.auth
-    - ultralytics.hub.session
-    - ultralytics.hub.utils
     - ultralytics.models
     - ultralytics.models.sam.modules.blocks
     - ultralytics.models.sam.modules.utils
@@ -165,6 +161,8 @@ test:
     - ultralytics.solutions.config
     - ultralytics.solutions.object_counter
     - ultralytics.solutions.solutions
+    - ultralytics.trackers
+    - ultralytics.trackers.utils
     - ultralytics.utils
     - ultralytics.utils.autobatch
     - ultralytics.utils.autodevice

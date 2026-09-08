@@ -164,27 +164,8 @@ test:
     - ultralytics.trackers
     - ultralytics.trackers.utils
     - ultralytics.utils
-    - ultralytics.utils.autobatch
-    - ultralytics.utils.autodevice
-    - ultralytics.utils.checks
-    - ultralytics.utils.cpu
-    - ultralytics.utils.dist
-    - ultralytics.utils.downloads
-    - ultralytics.utils.errors
-    - ultralytics.utils.events
     - ultralytics.utils.export
-    - ultralytics.utils.files
-    - ultralytics.utils.git
-    - ultralytics.utils.instance
-    - ultralytics.utils.loss
-    - ultralytics.utils.metrics
-    - ultralytics.utils.nms
-    - ultralytics.utils.ops
-    - ultralytics.utils.patches
-    - ultralytics.utils.plotting
-    - ultralytics.utils.tal
-    - ultralytics.utils.torch_utils
-    - ultralytics.utils.tqdm
+    - ultralytics.utils.callbacks
   requires:
     - pip
     - pytest

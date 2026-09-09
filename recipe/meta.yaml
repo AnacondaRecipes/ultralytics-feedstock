@@ -27,7 +27,8 @@ requirements:
   run:
     - python
     - filelock >=3.16.1
-    - numpy >=1.23
+    - numpy >=1.23  # [not osx]
+    - numpy >=1.23.0,!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,!=2.3.1,!=2.3.2,!=2.3.3,!=2.3.4  # [osx]
     - matplotlib-base >=3.3.0
     - opencv >=4.7.0,!=4.13.0.90
     - pillow >=7.1.2
@@ -46,17 +47,18 @@ requirements:
   run_constrained:
     # export-base
     # No numpy <2.0.0 for Python 3.13
-    - numpy <2.0.0  # [py<313]
     - onnx >=1.12.0  # [not osx]
-    - onnx >=1.12.0,<1.18.0  # [osx]
+    - onnx >=1.12.0,<1.18.0  # [osx and py<313]
+    - onnx >=1.12.0  # [osx and py>=313]
     - onnxslim >=0.1.82
-    - onnxruntime <1.20.0  # [(win or (osx and arm64)) and py<311]
+    - onnxruntime <1.20.0  # [(not aarch64 or not linux) and py<311]
     - onnxruntime >=1.20.0  # [py>=311]
-    - nncf >=2.14.0,<3.0.0  # [py>=39]
+    - nncf >=2.14.0,<4.0.0  # [py>=39]
     - openvino >=2024.0.0
     - packaging >=26.0  # [linux and aarch64 and py>=39]
     # export-tensorflow
      # Remove tensorflow upper bound to avoid solver failures between tensorflow/pytorch/torchvision
+    - numpy <2.0.0  # [py<313]
     - tensorflow >=2.0.0,<=2.19.0  # [py<313]
     - tensorflowjs >2.19.0,<3.0.0  # [py<313]
     - ydf <0.13.0  # [not aarch64 and py<=312]

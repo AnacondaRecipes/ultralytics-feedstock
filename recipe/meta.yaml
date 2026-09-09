@@ -177,7 +177,7 @@ test:
     - pip
     - pytest
     - git
-    - tensorflow  # [py<313]
+    - tensorflow >=2.0.0,<=2.19.0  # [py<313]
     # https://github.com/AnacondaRecipes/torchvision-feedstock/blob/master/recipe/meta.yaml#L8
     - pytorch-cpu 2.7  # [py<313]
     - torchvision 0.22.*  # [py<313]

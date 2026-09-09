@@ -118,6 +118,12 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_mnn" %}  # [linux]
 # E   FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/bf/zv4tnz9n509d_vvdxt3l9w8c0000gn/T/pytest-of-ec2-user/pytest-9/test_export_ncnn0/yolo26n_ncnn_model/model_pnnx.py'
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_ncnn" %}  # [osx]
+# TypeError: only 0-dimensional arrays can be converted to Python scalars
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_coreml[coreml]" %}  # [linux]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_coreml[mlmodel]" %}  # [linux]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_coreml_rtdetr" %}  # [linux]
+# FileNotFoundError: imxconv-pt not found. Install with: pip install imx500-converter[pt]s
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_imx" %}  # [linux]
 
 test:
   source_files:

@@ -130,7 +130,7 @@ requirements:
 # the interpreter (SIGSEGV) rather than raising a catchable error like the GUI tests above.
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_onnx_semantic_dnn" %}  # [osx]
 # E       assert (0 == 1)
-+{% set deselect_tests = deselect_tests + " --deselect=tests/test_python.py::test_predict_classes_with_max_det" %}  # [linux]
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_python.py::test_predict_classes_with_max_det" %}  # [linux]
 # E       AssertionError: val(save_txt=True) saved no label files
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_python.py::test_val_save_txt_pose" %}  # [linux]
 # >               assert len(r), f"'{model}' results should not be empty!"

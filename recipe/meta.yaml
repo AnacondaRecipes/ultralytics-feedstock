@@ -124,6 +124,8 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_coreml_rtdetr" %}  # [linux]
 # FileNotFoundError: imxconv-pt not found. Install with: pip install imx500-converter[pt]s
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_exports.py::test_export_imx" %}  # [linux]
+# FileNotFoundError: [34m[1mval: [0mError loading data from
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_python.py::test_yoloe" %}  # [win]
 
 test:
   source_files:
@@ -186,7 +188,7 @@ test:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
     # Unit tests after positive run just hanging on results prompt on osx.
-    - pytest -vv tests {{ deselect_tests }}  # [not (osx and py>=313)]
+    - pytest -vv tests {{ deselect_tests }}  # [not (osx and py>=312)]
     - yolo checks
     - ultralytics version
 

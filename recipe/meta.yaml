@@ -58,7 +58,6 @@ requirements:
     - packaging >=26.0  # [linux and aarch64 and py>=39]
     # export-tensorflow
      # Remove tensorflow upper bound to avoid solver failures between tensorflow/pytorch/torchvision
-    - numpy <2.0.0  # [py<313]
     - tensorflow >=2.0.0,<=2.19.0  # [py<313]
     - tensorflowjs >2.19.0,<3.0.0  # [py<313]
     - ydf <0.13.0  # [not aarch64 and py<=312]
@@ -179,11 +178,14 @@ test:
     - pip
     - pytest
     - git
-    - opencv <4.12  # [py<313]   # avoids libjpeg-turbo + newer libabseil lines
+    - opencv  # [py<313]
+    - numpy <2.0.0a0  # [linux and py<313]
     - tensorflow-cpu >=2.0.0,<=2.19.0  # [py<313]
     # https://github.com/AnacondaRecipes/torchvision-feedstock/blob/master/recipe/meta.yaml#L8
-    - pytorch-cpu 2.7  # [py<313]
-    - torchvision 0.22.*  # [py<313]
+    - pytorch-cpu 2.7  # [osx and py<313]
+    - pytorch-cpu 2.5  # [linux and py<313]
+    - torchvision 0.22.*  # [osx and py<313]
+    - torchvision 0.20.*  # [linux and py<313]
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"

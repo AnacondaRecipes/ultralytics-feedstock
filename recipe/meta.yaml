@@ -211,7 +211,7 @@ test:
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
     # Unit tests after positive run just hanging on results prompt on osx.
     # Tests for linux x86_64 and py<313 are hanging on CI for more than 15 hours.
-    - pytest -vv tests {{ deselect_tests }}  # [not (osx and py>=312) or not (linux and x86_64 and py<313)]
+    - pytest -vv tests {{ deselect_tests }}  # [not (osx and py>=312) and not (linux and x86_64 and py<313)]
     - yolo checks
     - ultralytics version
 
